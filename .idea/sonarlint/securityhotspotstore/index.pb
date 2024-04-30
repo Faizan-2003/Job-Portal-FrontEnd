@@ -11,3 +11,5 @@ N
 Job-Portal-FrontEnd/index.html,a\6\a6f02fe5a0862946f0adf6689bee88c9a8b9de29
 N
 Job-Portal-FrontEnd/.gitignore,2\6\268ce53992a674bd4bffc46cd96dd029cd1b265a
+]
+-Job-Portal-FrontEnd/src/components/footer.vue,c\a\ca0b0651ada1994bd060e181bfb808d3a6e041e8
