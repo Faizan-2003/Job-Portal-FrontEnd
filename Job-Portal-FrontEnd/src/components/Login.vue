@@ -15,7 +15,7 @@
           </div>
           <div>
             <input type="submit" value="Login"/>
-            <p class="register"><router-link to="/register ">Don't have an account? Register!</router-link></p>
+            <p class="register"><router-link to="/register">Don't have an account? Register!</router-link></p>
           </div>
         </form>
       </div>
@@ -102,11 +102,5 @@ h1 {
 
 .register {
   margin-top: 20px;
-}
-
-.register a {
-  color: #000;
-  font-size: 18px;
-  text-decoration: underline;
 }
 </style>

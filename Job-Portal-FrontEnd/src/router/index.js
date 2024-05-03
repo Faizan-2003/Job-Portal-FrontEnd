@@ -3,7 +3,7 @@ import { useUserStore } from "@/store/user";
 
 import Home from '../components/Home.vue';
 import Login from '../components/Login.vue';
-import Register from '../components/register.vue';
+import Register from '../components/Register.vue';
 import Myjobs from '../components/Jobs/MyJobs.vue';
 import ApplyJob from '../components/Jobs/ApplyJob.vue';
 import JobDetails from '../components/Jobs/JobDetails.vue';

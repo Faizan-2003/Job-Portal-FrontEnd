@@ -40,18 +40,33 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const name = ref('');
-const userType = ref('');
+const userType = ref('applicant'); // Default value for user type
 const location = ref('');
 const email = ref('');
 const password = ref('');
-
 const router = useRouter();
 
-const onSubmit = () => {
-  // Handle registration logic here
-  console.log("Registration submitted");
-  // Example: Redirect to login page after registration
-  router.push('/login');
+const onSubmit = async () => {
+  const userData = {
+    name: name.value,
+    email: email.value,
+    password_hash: password.value,
+    role: userType.value
+  };
+
+  try {
+    const response = await post('/register', userData);
+    if (response && response.data && response.data.authToken) {
+      // Registration successful
+      // Redirect to login page or show a success message
+      router.push('/login');
+    } else {
+      // Registration failed
+      // Handle failure case
+    }
+  } catch (error) {
+    // Handle error
+  }
 };
 </script>
 
