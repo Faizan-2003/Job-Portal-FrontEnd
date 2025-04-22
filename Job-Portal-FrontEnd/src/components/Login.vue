@@ -107,6 +107,7 @@ export default {
                 if (response.status === 200 && response.data.token) {
                     sessionStorage.setItem("token", response.data.token);
                     sessionStorage.setItem("userName", response.data.userEmail);
+                    sessionStorage.setItem("userType", response.data.userType);
                     this.$router.push("/home");
                     return;
                 }

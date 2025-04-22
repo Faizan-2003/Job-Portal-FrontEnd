@@ -8,20 +8,59 @@
             />
         </div>
         <div class="menu">
-            <div class="menu-item"><router-link to="/">Home</router-link></div>
-            <div class="menu-item">
-                <router-link to="/myjobs">My Jobs</router-link>
-            </div>
+            <!-- Conditional rendering based on userType -->
+            <button
+                class="menu-item"
+                v-if="userType === 'Employer'"
+                @click="navigateTo('/')"
+            >
+                Home
+            </button>
+            <button
+                class="menu-item"
+                v-if="userType === 'Employer'"
+                @click="navigateTo('/postedjobs')"
+            >
+                Posted Jobs
+            </button>
+            <button
+                class="menu-item"
+                v-if="userType === 'Employer'"
+                @click="navigateTo('/jobapplications')"
+            >
+                Job Applications
+            </button>
+
+            <button
+                class="menu-item"
+                v-if="userType === 'Applicant'"
+                @click="navigateTo('/')"
+            >
+                Home
+            </button>
+            <button
+                class="menu-item"
+                v-if="userType === 'Applicant'"
+                @click="navigateTo('/findjobs')"
+            >
+                Find Jobs
+            </button>
+            <button
+                class="menu-item"
+                v-if="userType === 'Applicant'"
+                @click="navigateTo('/myapplications')"
+            >
+                My Applications
+            </button>
         </div>
         <div class="user-dropdown">
             <span>{{ userName }}</span>
             <div class="user-dropdown-content">
-                <router-link to="/" @click="logout">Logout</router-link>
+                <button @click="logout">Logout</button>
             </div>
         </div>
     </header>
 </template>
-
 <script>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -30,24 +69,31 @@ export default {
     name: "Navigation",
     setup() {
         const userName = ref("Guest");
+        const userType = ref(""); // Store the user type
         const router = useRouter();
 
-        const updateUserName = () => {
+        const updateUserDetails = () => {
             userName.value = sessionStorage.getItem("userName") || "Guest";
+            userType.value = sessionStorage.getItem("userType") || ""; // Get userType from sessionStorage
+        };
+
+        const navigateTo = (path) => {
+            router.push(path); // Navigate to the specified path
         };
 
         onMounted(() => {
-            updateUserName();
+            updateUserDetails();
         });
 
         // Logout function
         const logout = () => {
             sessionStorage.clear();
             userName.value = "Guest";
+            userType.value = ""; // Clear userType
             router.push("/");
         };
 
-        return { userName, logout };
+        return { userName, userType, logout, navigateTo };
     },
 };
 </script>
@@ -66,22 +112,25 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 50px;
-    margin: 0; /* Remove any margin around the header */
+    height: 80px;
+    margin: 0;
     width: 100%; /* Ensure the header spans the full width */
     position: fixed; /* Keep the header fixed at the top */
     top: 0;
     left: 0;
 }
 
-/* Logo styles */
 .logo {
     width: 100px;
     height: auto;
 }
 
-/* User dropdown styles */
 .user-dropdown {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 18px;
     position: relative;
     cursor: pointer;
 }
@@ -112,9 +161,37 @@ body {
     margin-right: 40px;
     cursor: pointer;
     font-size: 20px;
+    color: #ffffff; /* White text */
+    background: none; /* No background */
+    border: none; /* No border */
+    padding: 0;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.menu-item:hover {
+    color: #ffdd00; /* Yellow hover effect */
+    text-decoration: underline; /* Underline on hover */
 }
 
 .menu-item:last-child {
     margin-right: 0;
+}
+
+/* Button reset for dropdown */
+.user-dropdown-content button {
+    background: none;
+    border: none;
+    color: #0077b6;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    padding: 5px 0;
+    width: 100%;
+}
+
+.user-dropdown-content button:hover {
+    color: #005f8a;
+    text-decoration: underline;
 }
 </style>
