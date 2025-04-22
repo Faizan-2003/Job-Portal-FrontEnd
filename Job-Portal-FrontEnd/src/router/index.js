@@ -23,8 +23,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const token = sessionStorage.getItem("token");
+
     if (!token && to.path !== "/" && to.path !== "/register") {
-        next("/"); // Redirect to login if not authenticated
+    } else if (token && (to.path === "/" || to.path === "/register")) {
+        next("/home");
     } else {
         next();
     }
