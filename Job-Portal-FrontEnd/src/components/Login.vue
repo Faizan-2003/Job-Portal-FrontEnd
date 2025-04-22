@@ -71,6 +71,7 @@
 
 <script>
 import $axios from "../axiosInstance.js";
+import { useRouter } from "vue-router";
 
 export default {
     name: "Login",
@@ -85,7 +86,6 @@ export default {
             },
         };
     },
-
     methods: {
         async validateLogin() {
             this.errors = { username: null, password: null, other: null };
@@ -95,26 +95,33 @@ export default {
                     password: this.password,
                 });
 
-                if (response.status === 200) {
-                    // Handle successful login (e.g., redirect to dashboard)
-                    console.log("Login successful:", response.data);
-                } else {
-                    // Handle errors
-                    if (response.data.errors) {
-                        this.errors = response.data.errors;
-                    } else {
-                        this.errors.other =
-                            "An error occurred. Please try again.";
-                    }
+                console.log(response);
+
+                // Handle successful login
+                if (response.status === 200 && response.data.token) {
+                    // Store token and username in session storage
+                    sessionStorage.setItem("token", response.data.token);
+                    sessionStorage.setItem("userName", response.data.userEmail);
+
+                    this.$router.push("/home");
+                    return;
                 }
             } catch (error) {
-                this.errors.other = "An error occurred. Please try again.";
+                // Handle errors
+                if (
+                    error.response &&
+                    error.response.data &&
+                    error.response.data.message
+                ) {
+                    this.errors.other = error.response.data.message;
+                } else {
+                    this.errors.other = "An error occurred. Please try again.";
+                }
             }
         },
     },
 };
 </script>
-
 <style scoped>
 /* Your CSS styles */
 </style>
