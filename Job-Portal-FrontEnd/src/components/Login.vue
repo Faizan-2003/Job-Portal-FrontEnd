@@ -1,106 +1,120 @@
 <template>
-  <div class="login-container">
-    <img src="../assets/images/logo.png" alt="Logo" class="logo"/>
-    <div class="login-content">
-      <div class="login-box">
-        <h1>Login</h1>
-        <form>
-          <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required/>
-          </div>
-          <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required/>
-          </div>
-          <div>
-            <input type="submit" value="Login"/>
-            <p class="register"><router-link to="/register">Don't have an account? Register!</router-link></p>
-          </div>
-        </form>
-      </div>
-      <p class="mt-5 mb-3 text-black copyRight">
-        &#169; ApproachJob.com
-      </p>
-    </div>
-  </div>
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+                <div
+                    class="col-md-6 d-flex align-items-center justify-content-center"
+                >
+                    <div class="text-center">
+                        <h1 class="welcome-text">Welcome to Approachjob.com</h1>
+                    </div>
+                </div>
+                <div
+                    class="col-md-6 d-flex align-items-center justify-content-center"
+                >
+                    <div
+                        class="login-form d-flex flex-column justify-content-center"
+                    >
+                        <h2 class="text-center"><strong>Login</strong></h2>
+                        <form @submit.prevent="validateLogin">
+                            <div class="mb-3">
+                                <label for="inputUsername" class="form-label"
+                                    >Username</label
+                                >
+                                <input
+                                    v-model="username"
+                                    id="inputUsername"
+                                    type="text"
+                                    class="form-control"
+                                    required
+                                />
+                                <div v-if="errors.username" class="text-danger">
+                                    {{ errors.username }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="inputPassword" class="form-label"
+                                    >Password</label
+                                >
+                                <input
+                                    v-model="password"
+                                    id="inputPassword"
+                                    type="password"
+                                    class="form-control"
+                                    required
+                                />
+                                <div v-if="errors.password" class="text-danger">
+                                    {{ errors.password }}
+                                </div>
+                            </div>
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-lg btn-block"
+                            >
+                                Login
+                            </button>
+                            <router-link
+                                to="/register"
+                                class="btn btn-link btn-lg btn-block"
+                                >Don't have an account? Register!</router-link
+                            >
+                            <div v-if="errors.other" class="text-danger mt-3">
+                                {{ errors.other }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import $axios from "../axiosInstance.js";
 
-export default defineComponent({
-  name: 'Login',
-});
+export default {
+    name: "Login",
+    data() {
+        return {
+            username: "",
+            password: "",
+            errors: {
+                username: null,
+                password: null,
+                other: null,
+            },
+        };
+    },
+
+    methods: {
+        async validateLogin() {
+            this.errors = { username: null, password: null, other: null };
+            try {
+                const response = await $axios.post("/api/login", {
+                    email: this.username,
+                    password: this.password,
+                });
+
+                if (response.status === 200) {
+                    // Handle successful login (e.g., redirect to dashboard)
+                    console.log("Login successful:", response.data);
+                } else {
+                    // Handle errors
+                    if (response.data.errors) {
+                        this.errors = response.data.errors;
+                    } else {
+                        this.errors.other =
+                            "An error occurred. Please try again.";
+                    }
+                }
+            } catch (error) {
+                this.errors.other = "An error occurred. Please try again.";
+            }
+        },
+    },
+};
 </script>
 
 <style scoped>
-h1 {
-  color: #000;
-  margin-bottom: 10px;
-}
-
-.login-container {
-  text-align: center;
-}
-
-.login-box {
-  background-color: #0077b6;
-  padding: 35px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  width: 300px;
-  margin: 0 auto;
-}
-
-.login-box form {
-  display: flex;
-  flex-direction: column;
-}
-
-.login-box label {
-  color: #fff;
-  margin-bottom: 20px;
-  margin-top: 10px;
-}
-
-.login-box input[type="text"],
-.login-box input[type="password"] {
-  padding: 10px;
-  margin-bottom: 20px;
-  border: none;
-  border-radius: 5px;
-}
-
-.login-box input[type="submit"] {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #213b48;
-  color: #fff;
-  cursor: pointer;
-}
-
-.login-box input[type="submit"]:hover {
-  background-color: #23607e;
-}
-
-.logo {
-  width: 200px;
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.login-content {
-  margin-top: 20px;
-}
-
-.copyRight {
-  margin-top: 20px;
-  color: #000;
-}
-
-.register {
-  margin-top: 20px;
-}
+/* Your CSS styles */
 </style>

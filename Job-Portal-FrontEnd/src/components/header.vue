@@ -1,43 +1,26 @@
 <template>
   <header class="header">
     <div>
-      <img src="logo.png" alt="Company Logo" class="logo" />
+      <img src="../assets/images/logo.png" alt="Company Logo" class="logo" />
     </div>
     <div class="menu">
-      <div class="menu-item">Home</div>
-      <div class="menu-item">My Jobs</div>
+      <div class="menu-item"><router-link to="/">Home</router-link></div>
+      <div class="menu-item"><router-link to="/myjobs">My Jobs</router-link></div>
     </div>
     <div class="user-dropdown">
       <span>User Name</span>
       <div class="user-dropdown-content">
-        <a href="#">Logout</a>
+        <router-link to="/logout">Logout</router-link>
       </div>
     </div>
   </header>
-
 </template>
 
-
 <script>
-import { useAuthStore } from '@/store/auth.js';
-import { useRouter } from 'vue-router';
-
 export default {
   name: "Navigation",
-  setup() {
-    const authStore = useAuthStore();
-    const router = useRouter();
-
-    const logout = () => {
-      authStore.logout();
-      router.push('/');
-    };
-
-    return { authStore, logout };
-  },
 };
 </script>
-
 
 <style scoped>
 .header {
@@ -83,5 +66,4 @@ export default {
 .menu-item:last-child {
   margin-right: 0;
 }
-
 </style>

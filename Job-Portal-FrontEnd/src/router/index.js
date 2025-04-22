@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { useUserStore } from "@/store/user";
 
 import Home from '../components/Home.vue';
 import Login from '../components/Login.vue';
@@ -11,8 +10,8 @@ import JobDetails from '../components/Jobs/JobDetails.vue';
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
-        { path: '/', component: Home },
-        { path: '/login', component: Login },
+        { path: '/', component: Login },
+        { path: '/home', component: Home },
         { path: '/register', component: Register },
         { path: '/myjobs', component: Myjobs },
         { path: '/applyjob' , component: ApplyJob},
@@ -21,12 +20,5 @@ const router = createRouter({
     ]
 });
 
-router.beforeEach((to, from, next) => {
-    const userStore = useUserStore();
-
-    userStore.checkUser();
-
-    next();
-});
 
 export default router;

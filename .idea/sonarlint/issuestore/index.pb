@@ -13,3 +13,25 @@ N
 Job-Portal-FrontEnd/.gitignore,2\6\268ce53992a674bd4bffc46cd96dd029cd1b265a
 ]
 -Job-Portal-FrontEnd/src/components/footer.vue,c\a\ca0b0651ada1994bd060e181bfb808d3a6e041e8
+\
+,Job-Portal-FrontEnd/src/components/Login.vue,e\3\e31c940be5294abcbbb1ccdff048109dd51c100f
+]
+-Job-Portal-FrontEnd/src/components/header.vue,1\5\1565c577679f12abb0e948a899b2638d4a96473e
+O
+Job-Portal-FrontEnd/src/App.vue,1\a\1a99b001f0b15bc01597f5b59ba7054ae905918e
+d
+4Job-Portal-FrontEnd/src/components/Jobs/ApplyJob.vue,d\0\d0eca62a428adcff6cd7ad3fe161d171be7aa226
+W
+'Job-Portal-FrontEnd/src/router/index.js,0\9\0927fb0d74cb49735ae99d7928c26faa2e4854db
+f
+6Job-Portal-FrontEnd/src/components/Jobs/JobDetails.vue,1\5\155be79dafbe79eff7d23fcdef55d51fb6dec333
+[
++Job-Portal-FrontEnd/src/components/Home.vue,b\6\b6a5a292aa7ae9ced03b2bc0dc51383eb4b58c6c
+W
+'Job-Portal-FrontEnd/src/assets/main.css,3\e\3e9a2987813d72a61c7edc165a39f4fbf7a6da33
+_
+/Job-Portal-FrontEnd/src/components/Register.vue,b\f\bf52b2e4dcbc88ba73f29a9e6fbbd66c48f86235
+O
+Job-Portal-FrontEnd/src/main.js,e\d\edef62a3e236e8a4c68a64a283d4615bd9275f07
+V
+&Job-Portal-FrontEnd/src/stores/user.js,e\f\efb9b5a1ba0d272e176fec4010a634d84c9921dc
