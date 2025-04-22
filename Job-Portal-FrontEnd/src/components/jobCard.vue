@@ -9,10 +9,17 @@
         <!-- Job Details -->
         <div class="job-details">
             <h2 class="job-title">{{ job.jobTitle }}</h2>
-            <p class="job-salary">Salary: {{ job.jobSalary }}</p>
-            <p class="job-location">Location: {{ job.jobLocation }}</p>
+            <p class="job-salary">
+                Salary: <strong>€{{ job.jobSalary }}</strong>
+            </p>
+            <p class="job-location">
+                Location: <strong>{{ job.jobLocation }}</strong>
+            </p>
             <p class="job-company">
-                Company: {{ companyNames[job.jobCompany] || "Loading..." }}
+                Company:
+                <strong>{{
+                    companyNames[job.jobCompany] || "Loading..."
+                }}</strong>
             </p>
         </div>
     </div>
@@ -21,20 +28,18 @@
 import { onMounted, reactive } from "vue";
 import { useJobsStore } from "../stores/jobs";
 import { useAuthStore } from "../stores/user";
-import { useToast } from "vue-toastification";
 
 export default {
     name: "JobCard",
     setup() {
         const { jobs, fetchJobs } = useJobsStore();
         const authStore = useAuthStore();
-        const companyNames = reactive({}); // Store company names by userID
-        const toast = useToast(); // Initialize toast
+        const companyNames = reactive({});
 
         const fetchAllCompanyNames = async () => {
             try {
                 if (!jobs.value || jobs.value.length === 0) {
-                    toast.error("Jobs data is empty or not loaded."); // Show error notification
+                    console.error("Jobs data is empty or not loaded.");
                     return;
                 }
 
@@ -51,21 +56,18 @@ export default {
                             companyNames[companyID] = companyName || "Unknown";
                         } catch (error) {
                             companyNames[companyID] = "Unknown";
-                            toast.error(
-                                `Failed to fetch company name for ID ${companyID}.`
-                            ); // Show error notification
                         }
                     }
                 }
             } catch (error) {
-                toast.error("An error occurred while fetching company names."); // Show error notification
+                console.error("Error in fetchAllCompanyNames:", error);
             }
         };
 
         onMounted(async () => {
-            await fetchJobs(); // Fetch jobs
-            toast.success("Jobs fetched successfully!"); // Show success notification
-            await fetchAllCompanyNames(); // Fetch company names
+            await fetchJobs();
+            console.log("Jobs fetched:", jobs.value);
+            await fetchAllCompanyNames();
         });
 
         return { jobs, companyNames };
@@ -77,8 +79,9 @@ export default {
     border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;
+    margin-top: 20px;
     margin: 20px;
-    width: 300px;
+    width: 330px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
 }
@@ -99,7 +102,7 @@ export default {
 }
 
 .job-title {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: bold;
     margin-bottom: 10px;
     color: #0077b6;
@@ -108,7 +111,7 @@ export default {
 .job-salary,
 .job-location,
 .job-company {
-    font-size: 16px;
+    font-size: 17px;
     margin: 5px 0;
     color: #333;
 }

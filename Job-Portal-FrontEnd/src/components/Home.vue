@@ -2,12 +2,11 @@
     <section class="home-page">
         <div class="job-cards-container">
             <JobCard />
-            <!-- Render the JobCard component -->
         </div>
     </section>
 </template>
 <script setup>
-import JobCard from "./jobCard.vue"; // Import the JobCard component
+import JobCard from "./jobCard.vue";
 </script>
 <style scoped>
 .home-page {
@@ -20,6 +19,7 @@ import JobCard from "./jobCard.vue"; // Import the JobCard component
 }
 
 .job-cards-container {
+    margin-top: 100px;
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
