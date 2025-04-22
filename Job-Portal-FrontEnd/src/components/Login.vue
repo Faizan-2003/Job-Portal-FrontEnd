@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import $axios from "../axiosInstance.js";
+import { useAuthStore } from "../stores/user";
 
 export default {
     name: "Login",
@@ -90,37 +90,16 @@ export default {
         };
     },
     methods: {
-        togglePasswordVisibility() {
-            this.showPassword = !this.showPassword;
-            console.log("showPassword:", this.showPassword); // Debug toggle state
-        },
         async validateLogin() {
             this.errors = { username: null, password: null, other: null };
-            try {
-                const response = await $axios.post("/api/login", {
-                    email: this.username,
-                    password: this.password,
-                });
 
-                console.log(response);
+            const authStore = useAuthStore();
+            const result = await authStore.login(this.username, this.password);
 
-                if (response.status === 200 && response.data.token) {
-                    sessionStorage.setItem("token", response.data.token);
-                    sessionStorage.setItem("userName", response.data.userEmail);
-                    sessionStorage.setItem("userType", response.data.userType);
-                    this.$router.push("/home");
-                    return;
-                }
-            } catch (error) {
-                if (
-                    error.response &&
-                    error.response.data &&
-                    error.response.data.message
-                ) {
-                    this.errors.other = error.response.data.message;
-                } else {
-                    this.errors.other = "An error occurred. Please try again.";
-                }
+            if (result.success) {
+                this.$router.push("/home");
+            } else {
+                this.errors.other = result.message;
             }
         },
     },

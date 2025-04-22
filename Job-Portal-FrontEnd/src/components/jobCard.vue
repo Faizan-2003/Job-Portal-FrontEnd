@@ -1,8 +1,8 @@
 <template>
-    <div class="job-card" v-for="job in jobs" :key="job.id">
+    <div class="job-card" v-for="job in jobs" :key="job.jobID">
         <!-- Cover Image -->
         <img
-            :src="`/public/img/${job.coverImage}`"
+            :src="`/img/${job.coverImage}`"
             alt="Job Cover"
             class="job-cover-image"
         />
@@ -11,24 +11,64 @@
             <h2 class="job-title">{{ job.jobTitle }}</h2>
             <p class="job-salary">Salary: {{ job.jobSalary }}</p>
             <p class="job-location">Location: {{ job.jobLocation }}</p>
-            <p class="job-company">Company: {{ job.jobCompany }}</p>
+            <p class="job-company">
+                Company: {{ companyNames[job.jobCompany] || "Loading..." }}
+            </p>
         </div>
     </div>
 </template>
 <script>
-import { onMounted } from "vue";
+import { onMounted, reactive } from "vue";
 import { useJobsStore } from "../stores/jobs";
+import { useAuthStore } from "../stores/user";
+import { useToast } from "vue-toastification";
 
 export default {
     name: "JobCard",
     setup() {
         const { jobs, fetchJobs } = useJobsStore();
+        const authStore = useAuthStore();
+        const companyNames = reactive({}); // Store company names by userID
+        const toast = useToast(); // Initialize toast
 
-        onMounted(() => {
-            fetchJobs();
+        const fetchAllCompanyNames = async () => {
+            try {
+                if (!jobs.value || jobs.value.length === 0) {
+                    toast.error("Jobs data is empty or not loaded."); // Show error notification
+                    return;
+                }
+
+                const uniqueCompanyIDs = [
+                    ...new Set(jobs.value.map((job) => job.jobCompany)),
+                ];
+
+                for (const companyID of uniqueCompanyIDs) {
+                    if (!companyNames[companyID]) {
+                        try {
+                            const companyName = await authStore.getUserByID(
+                                companyID
+                            );
+                            companyNames[companyID] = companyName || "Unknown";
+                        } catch (error) {
+                            companyNames[companyID] = "Unknown";
+                            toast.error(
+                                `Failed to fetch company name for ID ${companyID}.`
+                            ); // Show error notification
+                        }
+                    }
+                }
+            } catch (error) {
+                toast.error("An error occurred while fetching company names."); // Show error notification
+            }
+        };
+
+        onMounted(async () => {
+            await fetchJobs(); // Fetch jobs
+            toast.success("Jobs fetched successfully!"); // Show success notification
+            await fetchAllCompanyNames(); // Fetch company names
         });
 
-        return { jobs };
+        return { jobs, companyNames };
     },
 };
 </script>
