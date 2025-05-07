@@ -186,6 +186,7 @@ onMounted(async () => {
     border: 1px solid #ddd;
     border-radius: 8px;
     cursor: pointer;
+    margin-right: 10px;
     transition: background-color 0.3s ease, transform 0.2s ease;
     display: block;
     margin-left: auto;

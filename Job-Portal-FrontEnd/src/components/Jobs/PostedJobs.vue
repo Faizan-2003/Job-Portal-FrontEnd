@@ -1,17 +1,22 @@
 <template>
     <section class="posted-jobs-page">
-        <h1>Your Posted Jobs</h1>
-        <div v-if="companyJobs.length > 0" class="job-cards-container">
-            <div
-                v-for="(job, index) in companyJobs"
-                :key="job.jobID"
-                class="job-card"
-                @click="goToJobDetails(job.jobID)"
-            >
-                <JobCard :job="job" />
-            </div>
+        <p class="heading">Your Posted Jobs</p>
+        <div v-if="loading" class="loading">
+            <div class="spinner"></div>
         </div>
-        <p v-else>No jobs posted yet.</p>
+        <div v-else>
+            <div v-if="companyJobs.length > 0" class="job-cards-container">
+                <div
+                    v-for="(job, index) in companyJobs"
+                    :key="job.jobID"
+                    class="job-card"
+                    @click="goToJobDetails(job.jobID)"
+                >
+                    <JobCard :job="job" />
+                </div>
+            </div>
+            <p v-else>No jobs posted yet.</p>
+        </div>
     </section>
 </template>
 
@@ -19,28 +24,36 @@
 import JobCard from "../jobCard.vue";
 import { useJobsStore } from "../../stores/jobs";
 import { useAuthStore } from "../../stores/user";
-import { onMounted } from "vue";
-import { useRouter } from "vue-router"; // Import Vue Router
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const { companyJobs, fetchCompanyJobs } = useJobsStore();
 const { userID } = useAuthStore();
-const router = useRouter(); // Initialize Vue Router
+const router = useRouter();
 
-onMounted(() => {
-    fetchCompanyJobs(userID); // Fetch jobs posted by the logged-in company
+const loading = ref(true); // Track loading state
+
+onMounted(async () => {
+    loading.value = true; // Set loading to true before fetching
+    await fetchCompanyJobs(userID); // Fetch jobs posted by the logged-in company
+    loading.value = false; // Set loading to false after fetching
 });
 
-// Navigate to JobDetails page
 const goToJobDetails = (jobID) => {
-    router.push({ name: "JobDetails", params: { jobID } }); // Pass jobID as a route parameter
+    router.push({ name: "JobDetails", params: { jobID } });
 };
 </script>
 
 <style scoped>
+.heading {
+    font-size: 36px;
+    font-weight: bold;
+    color: #0077b6;
+    text-align: left;
+}
 .posted-jobs-page {
+    margin-top: 100px;
     padding: 20px;
-    background-color: #f9f9f9;
-    min-height: 100vh;
 }
 
 .job-cards-container {
@@ -52,6 +65,31 @@ const goToJobDetails = (jobID) => {
 }
 
 .job-card {
-    cursor: pointer; /* Add pointer cursor to indicate clickability */
+    cursor: pointer;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh; /* Center spinner vertically */
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 </style>
