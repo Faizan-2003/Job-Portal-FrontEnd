@@ -8,7 +8,6 @@
             />
         </div>
         <div class="menu">
-            <!-- Conditional rendering based on userType -->
             <button
                 class="menu-item"
                 v-if="userType === 'Employer'"
@@ -69,17 +68,16 @@ export default {
     name: "Navigation",
     setup() {
         const userName = ref("Guest");
-        const userType = ref(""); // Store the user type
+        const userType = ref("");
         const router = useRouter();
 
         const updateUserDetails = () => {
             userName.value = sessionStorage.getItem("userName") || "Guest";
-            userType.value = sessionStorage.getItem("userType") || ""; // Get userType from sessionStorage
+            userType.value = sessionStorage.getItem("userType") || "";
         };
 
         const navigateTo = (path) => {
-            router.push(path); // Navigate to the specified path
-        };
+            router.push(path);
 
         onMounted(() => {
             updateUserDetails();
@@ -89,7 +87,7 @@ export default {
         const logout = () => {
             sessionStorage.clear();
             userName.value = "Guest";
-            userType.value = ""; // Clear userType
+            userType.value = "";
             router.push("/");
         };
 
@@ -104,7 +102,6 @@ body {
     box-sizing: border-box;
 }
 
-/* Header styles */
 .header {
     background-color: #0077b6;
     color: #fff;
@@ -114,8 +111,8 @@ body {
     align-items: center;
     height: 80px;
     margin: 0;
-    width: 100%; /* Ensure the header spans the full width */
-    position: fixed; /* Keep the header fixed at the top */
+    width: 100%;
+    position: fixed;
     top: 0;
     left: 0;
 }
@@ -152,7 +149,6 @@ body {
     display: block;
 }
 
-/* Menu styles */
 .menu {
     display: flex;
 }
@@ -161,24 +157,23 @@ body {
     margin-right: 40px;
     cursor: pointer;
     font-size: 20px;
-    color: #ffffff; /* White text */
-    background: none; /* No background */
-    border: none; /* No border */
+    color: #ffffff;
+    background: none;
+    border: none;
     padding: 0;
     text-transform: uppercase;
     font-weight: bold;
 }
 
 .menu-item:hover {
-    color: #ffdd00; /* Yellow hover effect */
-    text-decoration: underline; /* Underline on hover */
+    color: #ffdd00;
+    text-decoration: underline;
 }
 
 .menu-item:last-child {
     margin-right: 0;
 }
 
-/* Button reset for dropdown */
 .user-dropdown-content button {
     background: none;
     border: none;

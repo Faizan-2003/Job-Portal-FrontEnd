@@ -31,12 +31,17 @@ const { companyJobs, fetchCompanyJobs } = useJobsStore();
 const { userID } = useAuthStore();
 const router = useRouter();
 
-const loading = ref(true); // Track loading state
+const loading = ref(true);
 
 onMounted(async () => {
-    loading.value = true; // Set loading to true before fetching
-    await fetchCompanyJobs(userID); // Fetch jobs posted by the logged-in company
-    loading.value = false; // Set loading to false after fetching
+    loading.value = true;
+    try {
+        await fetchCompanyJobs(userID);
+    } catch (error) {
+        console.error("Error fetching jobs:", error);
+    } finally {
+        loading.value = false;
+    }
 });
 
 const goToJobDetails = (jobID) => {
@@ -72,7 +77,7 @@ const goToJobDetails = (jobID) => {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 50vh; /* Center spinner vertically */
+    height: 50vh;
 }
 
 .spinner {

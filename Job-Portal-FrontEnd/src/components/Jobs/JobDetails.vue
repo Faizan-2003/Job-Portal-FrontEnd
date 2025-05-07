@@ -2,7 +2,11 @@
     <section class="job-details-page container">
         <button class="back-btn mb-4 ms-auto" @click="goBack">← Back</button>
 
-        <div v-if="jobDetails" class="job-details-layout">
+        <div v-if="loading" class="loading">
+            <div class="spinner"></div>
+        </div>
+
+        <div v-else class="job-details-layout">
             <div class="image-container">
                 <img
                     :src="`/img/${jobDetails.coverImage}`"
@@ -31,10 +35,6 @@
                 </div>
             </div>
         </div>
-
-        <div v-else class="loading">
-            <div class="spinner"></div>
-        </div>
     </section>
 </template>
 
@@ -52,13 +52,13 @@ const { getUserByID } = useAuthStore();
 const jobID = route.params.jobID;
 const jobDetails = ref(null);
 const companyName = ref("");
+const loading = ref(true);
 
 const goBack = () => {
     window.history.back();
 };
 
 const editJob = () => {
-    // Redirect to the edit job page
     window.location.href = `/edit-job/${jobID}`;
 };
 
@@ -88,9 +88,16 @@ const deleteJob = async () => {
 };
 
 onMounted(async () => {
-    jobDetails.value = await fetchJobDetails(jobID);
-    if (jobDetails.value && jobDetails.value.jobCompany) {
-        companyName.value = await getUserByID(jobDetails.value.jobCompany);
+    try {
+        loading.value = true;
+        jobDetails.value = await fetchJobDetails(jobID);
+        if (jobDetails.value && jobDetails.value.jobCompany) {
+            companyName.value = await getUserByID(jobDetails.value.jobCompany);
+        }
+    } catch (error) {
+        console.error("Error loading job details:", error);
+    } finally {
+        loading.value = false;
     }
 });
 </script>

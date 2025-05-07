@@ -1,31 +1,37 @@
 <template>
     <div class="job-card">
-        <!-- Cover Image -->
-        <img
-            :src="`/img/${job.coverImage}`"
-            alt="Job Cover"
-            class="job-cover-image"
-        />
-        <!-- Job Details -->
-        <div class="job-details">
-            <h2 class="job-title">{{ job.jobTitle }}</h2>
-            <p class="job-salary">
-                Salary: <strong>€{{ job.jobSalary }}</strong>
-            </p>
-            <p class="job-location">
-                Location: <strong>{{ job.jobLocation }}</strong>
-            </p>
-            <p class="job-company">
-                Company:
-                <strong>{{
-                    companyNames[job.jobCompany] || "Loading..."
-                }}</strong>
-            </p>
+        <div v-if="loading" class="skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-text skeleton-title"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+        </div>
+        <div v-else>
+            <img
+                :src="`/img/${job.coverImage}`"
+                alt="Job Cover"
+                class="job-cover-image"
+            />
+            <div class="job-details">
+                <h2 class="job-title">{{ job.jobTitle }}</h2>
+                <p class="job-salary">
+                    Salary: <strong>€{{ job.jobSalary }}</strong>
+                </p>
+                <p class="job-location">
+                    Location: <strong>{{ job.jobLocation }}</strong>
+                </p>
+                <p class="job-company">
+                    Company:
+                    <strong>{{ companyNames[job.jobCompany] }}</strong>
+                </p>
+            </div>
         </div>
     </div>
 </template>
+
 <script>
-import { reactive, onMounted } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useAuthStore } from "../stores/user";
 
 export default {
@@ -39,6 +45,7 @@ export default {
     setup(props) {
         const authStore = useAuthStore();
         const companyNames = reactive({});
+        const loading = ref(true);
 
         const fetchCompanyName = async () => {
             try {
@@ -49,15 +56,18 @@ export default {
                 }
             } catch (error) {
                 console.error("Error fetching company name:", error);
+            } finally {
+                loading.value = false;
             }
         };
 
         onMounted(fetchCompanyName);
 
-        return { companyNames };
+        return { companyNames, loading };
     },
 };
 </script>
+
 <style scoped>
 .job-card {
     border: 1px solid #ddd;
@@ -98,5 +108,48 @@ export default {
     font-size: 17px;
     margin: 5px 0;
     color: #333;
+}
+
+.skeleton-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+.skeleton-image {
+    width: 100%;
+    height: 200px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+}
+
+.skeleton-text {
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+}
+
+.skeleton-title {
+    width: 70%;
+}
+
+.skeleton-text:not(.skeleton-title) {
+    width: 90%;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: #e0e0e0;
+    }
+    50% {
+        background-color: #f0f0f0;
+    }
+    100% {
+        background-color: #e0e0e0;
+    }
 }
 </style>
