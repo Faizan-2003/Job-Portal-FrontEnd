@@ -38,12 +38,28 @@ export const useJobsStore = () => {
             console.error("Error fetching company jobs:", error);
         }
     };
+    const fetchJobDetails = async (jobID) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const response = await $axios.get(`/api/job/${jobID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response && response.data && response.data.success) {
+                return response.data.job; // Return job details
+            }
+        } catch (error) {
+            console.error("Error fetching job details:", error);
+        }
+        return null;
+    };
 
-    // Return each method and variable individually
     return {
         jobs,
         companyJobs,
         fetchJobs,
         fetchCompanyJobs,
+        fetchJobDetails, // Add fetchJobDetails to the return object
     };
 };

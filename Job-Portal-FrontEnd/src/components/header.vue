@@ -41,7 +41,7 @@
             <button
                 class="menu-item"
                 v-if="userType === 'Applicant'"
-                @click="navigateTo('/findjobs')"
+                @click="navigateTo('/find-jobs')"
             >
                 Find Jobs
             </button>

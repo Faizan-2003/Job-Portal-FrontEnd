@@ -12,10 +12,18 @@ const routes = [
     { path: "/", component: Login },
     { path: "/home", component: Home },
     { path: "/register", component: Register },
-    { path: "/posted-jobs", component: PostedJobs },
-    { path: "/find-jobs", component: FindJobs },
+    { path: "/posted-jobs", name: "PostedJobs", component: PostedJobs },
+    {
+        path: "/find-jobs",
+        component: FindJobs,
+    },
     { path: "/applyjob", component: ApplyJob },
-    { path: "/jobdetails", component: JobDetails },
+    {
+        path: "/jobdetails/:jobID",
+        name: "JobDetails",
+        component: JobDetails,
+        props: true,
+    },
 ];
 
 const router = createRouter({

@@ -1,11 +1,223 @@
-<script setup>
-
-</script>
-
 <template>
+    <section class="job-details-page container">
+        <button class="back-btn mb-4 ms-auto" @click="goBack">← Back</button>
 
+        <div v-if="jobDetails" class="job-details-layout">
+            <div class="image-container">
+                <img
+                    :src="`/img/${jobDetails.coverImage}`"
+                    alt="Job Cover"
+                    class="cover-img"
+                />
+            </div>
+
+            <div class="details-container">
+                <h2 class="job-title">{{ jobDetails.jobTitle }}</h2>
+                <p><strong>Company Name:</strong> {{ companyName }}</p>
+                <p><strong>Location:</strong> {{ jobDetails.jobLocation }}</p>
+                <p><strong>Salary:</strong> €{{ jobDetails.jobSalary }}</p>
+                <p>
+                    <strong>Posted Date:</strong> {{ jobDetails.jobPostedDate }}
+                </p>
+                <p>
+                    <strong>Description:</strong>
+                    {{ jobDetails.jobDescription }}
+                </p>
+                <div class="action-buttons">
+                    <button class="edit-btn" @click="editJob">Edit</button>
+                    <button class="delete-btn" @click="deleteJob">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div v-else class="loading">
+            <div class="spinner"></div>
+        </div>
+    </section>
 </template>
 
-<style scoped>
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useJobsStore } from "../../stores/jobs";
+import { useAuthStore } from "../../stores/user";
+import { ElMessageBox, ElMessage } from "element-plus";
 
+const route = useRoute();
+const { fetchJobDetails, deleteJobById } = useJobsStore();
+const { getUserByID } = useAuthStore();
+
+const jobID = route.params.jobID;
+const jobDetails = ref(null);
+const companyName = ref("");
+
+const goBack = () => {
+    window.history.back();
+};
+
+const editJob = () => {
+    // Redirect to the edit job page
+    window.location.href = `/edit-job/${jobID}`;
+};
+
+const deleteJob = async () => {
+    try {
+        await ElMessageBox.confirm(
+            "Are you sure you want to delete this job?",
+            "Confirmation",
+            {
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                type: "warning",
+            }
+        );
+        await deleteJobById(jobID);
+        ElMessage({
+            type: "success",
+            message: "Job deleted successfully!",
+        });
+        goBack();
+    } catch (error) {
+        ElMessage({
+            type: "info",
+            message: "Job deletion canceled.",
+        });
+    }
+};
+
+onMounted(async () => {
+    jobDetails.value = await fetchJobDetails(jobID);
+    if (jobDetails.value && jobDetails.value.jobCompany) {
+        companyName.value = await getUserByID(jobDetails.value.jobCompany);
+    }
+});
+</script>
+
+<style scoped>
+.job-details-page {
+    padding-top: 100px;
+    padding-bottom: 60px;
+}
+
+.job-details-layout {
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.image-container {
+    flex: 1;
+    max-width: 400px;
+}
+
+.cover-img {
+    width: 600px;
+    margin-left: 20px;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.details-container {
+    margin-left: 200px;
+    flex: 2;
+    font-size: 1.4rem;
+    line-height: 2;
+    color: #333;
+    text-align: left;
+}
+
+.job-title {
+    font-size: 2.8rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.action-buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+.edit-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.edit-btn:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+.back-btn {
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: block;
+    margin-left: auto;
+}
+
+.back-btn:hover {
+    background-color: #e2e6ea;
+    transform: translateY(-2px);
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-top: 5px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 </style>
