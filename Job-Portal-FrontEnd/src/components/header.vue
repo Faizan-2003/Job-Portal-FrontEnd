@@ -19,7 +19,7 @@
             <button
                 class="menu-item"
                 v-if="userType === 'Employer'"
-                @click="navigateTo('/postedjobs')"
+                @click="navigateTo('/posted-jobs')"
             >
                 Posted Jobs
             </button>

@@ -1,5 +1,5 @@
 <template>
-    <div class="job-card" v-for="job in jobs" :key="job.jobID">
+    <div class="job-card">
         <!-- Cover Image -->
         <img
             :src="`/img/${job.coverImage}`"
@@ -25,52 +25,36 @@
     </div>
 </template>
 <script>
-import { onMounted, reactive } from "vue";
-import { useJobsStore } from "../stores/jobs";
+import { reactive, onMounted } from "vue";
 import { useAuthStore } from "../stores/user";
 
 export default {
     name: "JobCard",
-    setup() {
-        const { jobs, fetchJobs } = useJobsStore();
+    props: {
+        job: {
+            type: Object,
+            required: true,
+        },
+    },
+    setup(props) {
         const authStore = useAuthStore();
         const companyNames = reactive({});
 
-        const fetchAllCompanyNames = async () => {
+        const fetchCompanyName = async () => {
             try {
-                if (!jobs.value || jobs.value.length === 0) {
-                    console.error("Jobs data is empty or not loaded.");
-                    return;
-                }
-
-                const uniqueCompanyIDs = [
-                    ...new Set(jobs.value.map((job) => job.jobCompany)),
-                ];
-
-                for (const companyID of uniqueCompanyIDs) {
-                    if (!companyNames[companyID]) {
-                        try {
-                            const companyName = await authStore.getUserByID(
-                                companyID
-                            );
-                            companyNames[companyID] = companyName || "Unknown";
-                        } catch (error) {
-                            companyNames[companyID] = "Unknown";
-                        }
-                    }
+                const companyID = props.job.jobCompany;
+                if (!companyNames[companyID]) {
+                    const companyName = await authStore.getUserByID(companyID);
+                    companyNames[companyID] = companyName || "Unknown";
                 }
             } catch (error) {
-                console.error("Error in fetchAllCompanyNames:", error);
+                console.error("Error fetching company name:", error);
             }
         };
 
-        onMounted(async () => {
-            await fetchJobs();
-            console.log("Jobs fetched:", jobs.value);
-            await fetchAllCompanyNames();
-        });
+        onMounted(fetchCompanyName);
 
-        return { jobs, companyNames };
+        return { companyNames };
     },
 };
 </script>
