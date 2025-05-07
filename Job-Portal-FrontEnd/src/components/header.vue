@@ -8,6 +8,7 @@
             />
         </div>
         <div class="menu">
+            <!-- Conditional rendering based on userType -->
             <button
                 class="menu-item"
                 v-if="userType === 'Employer'"
@@ -78,12 +79,12 @@ export default {
 
         const navigateTo = (path) => {
             router.push(path);
+        };
 
         onMounted(() => {
             updateUserDetails();
         });
 
-        // Logout function
         const logout = () => {
             sessionStorage.clear();
             userName.value = "Guest";
@@ -102,6 +103,7 @@ body {
     box-sizing: border-box;
 }
 
+/* Header styles */
 .header {
     background-color: #0077b6;
     color: #fff;
