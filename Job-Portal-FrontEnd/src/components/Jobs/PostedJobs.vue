@@ -1,5 +1,8 @@
 <template>
     <section class="posted-jobs-page">
+        <div class="top-actions">
+            <button class="post-btn" @click="goToAddJob">+ Post New Job</button>
+        </div>
         <p class="heading">Your Posted Jobs</p>
         <div v-if="loading" class="loading">
             <div class="spinner"></div>
@@ -47,9 +50,30 @@ onMounted(async () => {
 const goToJobDetails = (jobID) => {
     router.push({ name: "JobDetails", params: { jobID } });
 };
+const goToAddJob = () => {
+    router.push({ name: "PostJob" });
+};
 </script>
 
 <style scoped>
+.top-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+.post-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.post-btn:hover {
+    background-color: #0056b3;
+}
 .heading {
     font-size: 36px;
     font-weight: bold;

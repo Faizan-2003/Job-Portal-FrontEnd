@@ -7,6 +7,7 @@ import PostedJobs from "../components/Jobs/PostedJobs.vue";
 import FindJobs from "../components/Jobs/FindJobs.vue";
 import ApplyJob from "../components/Jobs/ApplyJob.vue";
 import JobDetails from "../components/Jobs/JobDetails.vue";
+import PostJobs from "../components/Jobs/PostJobs.vue";
 
 const routes = [
     { path: "/", component: Login },
@@ -23,6 +24,11 @@ const routes = [
         name: "JobDetails",
         component: JobDetails,
         props: true,
+    },
+    {
+        path: "/postjob",
+        name: "PostJob",
+        component: PostJobs,
     },
 ];
 

@@ -21,7 +21,30 @@ export const useJobsStore = () => {
             console.error("Error fetching jobs:", error);
         }
     };
-
+    const addJob = async (jobData) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const response = await $axios.post("/api/job/add", jobData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            if (response && response.data && response.data.success) {
+                return { success: true };
+            } else {
+                return {
+                    success: false,
+                    message: response?.data?.message || "Unknown error",
+                };
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || error.message,
+            };
+        }
+    };
     // Fetch jobs posted by a specific company
     const fetchCompanyJobs = async (userID) => {
         try {
@@ -60,6 +83,7 @@ export const useJobsStore = () => {
         companyJobs,
         fetchJobs,
         fetchCompanyJobs,
-        fetchJobDetails, // Add fetchJobDetails to the return object
+        fetchJobDetails,
+        addJob, // Add fetchJobDetails to the return object
     };
 };
