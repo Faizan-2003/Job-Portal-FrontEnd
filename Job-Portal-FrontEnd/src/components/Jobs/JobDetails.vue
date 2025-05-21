@@ -9,7 +9,7 @@
         <div v-else class="job-details-layout">
             <div class="image-container">
                 <img
-                    :src="`/img/${jobDetails.coverImage}`"
+                    :src="getImageUrl(jobDetails.coverImage)"
                     alt="Job Cover"
                     class="cover-img"
                 />
@@ -44,6 +44,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useJobsStore } from "../../stores/jobs";
 import { useAuthStore } from "../../stores/user";
 import { ElMessageBox, ElMessage } from "element-plus";
+import $axios from "../../axiosInstance";
 
 const route = useRoute();
 const router = useRouter();
@@ -60,7 +61,7 @@ const goBack = () => {
 };
 
 const editJob = () => {
-    window.location.href = `/edit-job/${jobID}`;
+    window.location.href = `/editjob/${jobID}`;
 };
 
 const deleteJob = async () => {
@@ -87,6 +88,11 @@ const deleteJob = async () => {
             message: "Job deletion canceled.",
         });
     }
+};
+
+const getImageUrl = (filename) => {
+    if (!filename) return "/default-image.png";
+    return `${$axios.imgBaseURL}/${filename}`;
 };
 
 onMounted(async () => {

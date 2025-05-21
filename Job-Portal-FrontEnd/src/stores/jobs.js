@@ -2,8 +2,8 @@ import { ref } from "vue";
 import $axios from "../axiosInstance";
 
 export const useJobsStore = () => {
-    const jobs = ref([]); // Stores all jobs
-    const companyJobs = ref([]); // Stores jobs posted by a specific company
+    const jobs = ref([]);
+    const companyJobs = ref([]);
 
     // Fetch all jobs
     const fetchJobs = async () => {
@@ -84,6 +84,39 @@ export const useJobsStore = () => {
             console.error("Error fetching company jobs:", error);
         }
     };
+    const editJob = async (jobID, jobData, isFormData = false) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const headers = {
+                Authorization: `Bearer ${token}`,
+            };
+            if (isFormData) {
+                headers["Content-Type"] = "multipart/form-data";
+            } else {
+                headers["Content-Type"] = "application/json";
+            }
+            const response = await $axios.post(
+                `/api/job/edit/${jobID}`,
+                isFormData ? jobData : JSON.stringify(jobData),
+                { headers }
+            );
+            if (response.status >= 200 && response.status < 300) {
+                return { success: true };
+            } else if (response.data && response.data.success) {
+                return { success: true };
+            } else {
+                return {
+                    success: false,
+                    message: response?.data?.message || "Unknown error",
+                };
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || error.message,
+            };
+        }
+    };
     const fetchJobDetails = async (jobID) => {
         try {
             const token = sessionStorage.getItem("token");
@@ -93,7 +126,7 @@ export const useJobsStore = () => {
                 },
             });
             if (response && response.data && response.data.success) {
-                return response.data.job; // Return job details
+                return response.data.job;
             }
         } catch (error) {
             console.error("Error fetching job details:", error);
@@ -109,5 +142,6 @@ export const useJobsStore = () => {
         fetchJobDetails,
         addJob,
         deleteJobById,
+        editJob,
     };
 };

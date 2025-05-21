@@ -30,45 +30,42 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import { reactive, ref, onMounted } from "vue";
 import { useAuthStore } from "../stores/user";
+import $axios from "../axiosInstance";
 
-export default {
-    name: "JobCard",
-    props: {
-        job: {
-            type: Object,
-            required: true,
-        },
+const props = defineProps({
+    job: {
+        type: Object,
+        required: true,
     },
-    setup(props) {
-        const authStore = useAuthStore();
-        const companyNames = reactive({});
-        const loading = ref(true);
+});
 
-        const fetchCompanyName = async () => {
-            try {
-                const companyID = props.job.jobCompany;
-                if (!companyNames[companyID]) {
-                    const companyName = await authStore.getUserByID(companyID);
-                    companyNames[companyID] = companyName || "Unknown";
-                }
-            } catch (error) {
-                console.error("Error fetching company name:", error);
-            } finally {
-                loading.value = false;
-            }
-        };
-        const getImageUrl = (filename) => {
-            if (!filename) return "/default-image.png";
-            return `http://localhost/img/${filename}`;
-        };
-        onMounted(fetchCompanyName);
+const authStore = useAuthStore();
+const companyNames = reactive({});
+const loading = ref(true);
 
-        return { companyNames, loading, getImageUrl };
-    },
+const fetchCompanyName = async () => {
+    try {
+        const companyID = props.job.jobCompany;
+        if (!companyNames[companyID]) {
+            const companyName = await authStore.getUserByID(companyID);
+            companyNames[companyID] = companyName || "Unknown";
+        }
+    } catch (error) {
+        console.error("Error fetching company name:", error);
+    } finally {
+        loading.value = false;
+    }
 };
+
+const getImageUrl = (filename) => {
+    if (!filename) return "/default-image.png";
+    return `${$axios.imgBaseURL}/${filename}`;
+};
+
+onMounted(fetchCompanyName);
 </script>
 
 <style scoped>
