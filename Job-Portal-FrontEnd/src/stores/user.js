@@ -4,7 +4,7 @@ import $axios from "../axiosInstance";
 export const useAuthStore = defineStore("user", {
     state: () => ({
         userName: sessionStorage.getItem("userName") || "",
-        userType: sessionStorage.getItem("userType") || "", // Retrieve userType from sessionStorage
+        userType: sessionStorage.getItem("userType") || "",
         token: sessionStorage.getItem("token") || "",
         userID: sessionStorage.getItem("userID") || "",
     }),

@@ -9,7 +9,7 @@
         </div>
         <div v-else>
             <img
-                :src="`/img/${job.coverImage}`"
+                :src="getImageUrl(job.coverImage)"
                 alt="Job Cover"
                 class="job-cover-image"
             />
@@ -60,10 +60,13 @@ export default {
                 loading.value = false;
             }
         };
-
+        const getImageUrl = (filename) => {
+            if (!filename) return "/default-image.png";
+            return `http://localhost/img/${filename}`;
+        };
         onMounted(fetchCompanyName);
 
-        return { companyNames, loading };
+        return { companyNames, loading, getImageUrl };
     },
 };
 </script>
