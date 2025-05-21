@@ -57,6 +57,7 @@ import { ref } from "vue";
 import { useJobsStore } from "../../stores/jobs";
 import { useAuthStore } from "../../stores/user";
 import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus"; // Import Element Plus message
 
 const { addJob } = useJobsStore();
 const { userID } = useAuthStore();
@@ -92,7 +93,7 @@ function handleFile(selected) {
     if (!selected) return;
     const validTypes = ["image/png", "image/jpeg", "image/jpg"];
     if (!validTypes.includes(selected.type)) {
-        alert("Only PNG, JPG, or JPEG files are allowed.");
+        ElMessage.error("Only PNG, JPG, or JPEG files are allowed.");
         return;
     }
     file.value = selected;
@@ -121,10 +122,12 @@ const submitJob = async () => {
 
     const result = await addJob(formData);
     if (result && result.success) {
-        alert("Job posted successfully!");
+        ElMessage.success("Job posted successfully!");
         router.push({ name: "PostedJobs" });
     } else {
-        alert(result?.message || "Failed to post job. Please try again.");
+        ElMessage.error(
+            result?.message || "Failed to post job. Please try again."
+        );
     }
 };
 </script>

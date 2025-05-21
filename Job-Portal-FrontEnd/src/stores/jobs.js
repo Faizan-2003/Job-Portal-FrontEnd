@@ -45,6 +45,29 @@ export const useJobsStore = () => {
             };
         }
     };
+    const deleteJobById = async (jobID) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const response = await $axios.delete(`/api/job/delete/${jobID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response && response.data && response.data.success) {
+                return { success: true };
+            } else {
+                return {
+                    success: false,
+                    message: response?.data?.message || "Unknown error",
+                };
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || error.message,
+            };
+        }
+    };
     // Fetch jobs posted by a specific company
     const fetchCompanyJobs = async (userID) => {
         try {
@@ -84,6 +107,7 @@ export const useJobsStore = () => {
         fetchJobs,
         fetchCompanyJobs,
         fetchJobDetails,
-        addJob, // Add fetchJobDetails to the return object
+        addJob,
+        deleteJobById,
     };
 };

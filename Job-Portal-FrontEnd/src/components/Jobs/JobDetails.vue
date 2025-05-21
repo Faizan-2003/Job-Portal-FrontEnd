@@ -40,12 +40,13 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useJobsStore } from "../../stores/jobs";
 import { useAuthStore } from "../../stores/user";
 import { ElMessageBox, ElMessage } from "element-plus";
 
 const route = useRoute();
+const router = useRouter();
 const { fetchJobDetails, deleteJobById } = useJobsStore();
 const { getUserByID } = useAuthStore();
 
@@ -73,12 +74,13 @@ const deleteJob = async () => {
                 type: "warning",
             }
         );
-        await deleteJobById(jobID);
-        ElMessage({
-            type: "success",
-            message: "Job deleted successfully!",
-        });
-        goBack();
+        const result = await deleteJobById(jobID);
+        if (result && result.success) {
+            ElMessage.success("Job deleted successfully!");
+            router.push({ name: "PostedJobs" });
+        } else {
+            ElMessage.error(result?.message || "Failed to delete job.");
+        }
     } catch (error) {
         ElMessage({
             type: "info",
