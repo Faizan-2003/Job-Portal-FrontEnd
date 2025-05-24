@@ -7,6 +7,7 @@
             <div class="skeleton-text"></div>
             <div class="skeleton-text"></div>
         </div>
+
         <div v-else>
             <img
                 :src="getImageUrl(job.coverImage)"

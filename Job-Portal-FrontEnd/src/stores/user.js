@@ -11,7 +11,7 @@ export const useAuthStore = defineStore("user", {
     actions: {
         async login(email, password) {
             try {
-                const response = await $axios.post("/api/login", {
+                const response = await $axios.post("login", {
                     email,
                     password,
                 });
@@ -49,7 +49,7 @@ export const useAuthStore = defineStore("user", {
 
         async register(userData) {
             try {
-                const response = await $axios.post("/api/register", userData);
+                const response = await $axios.post("register", userData);
 
                 if (response.status === 201) {
                     return { success: true };
@@ -74,7 +74,7 @@ export const useAuthStore = defineStore("user", {
 
         async getUserByID(userID) {
             try {
-                const response = await $axios.get(`/api/user/${userID}`);
+                const response = await $axios.get(`user/${userID}`);
 
                 if (response && response.data) {
                     if (response.data.user && response.data.user.userName) {

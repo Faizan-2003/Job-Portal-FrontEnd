@@ -28,18 +28,62 @@
                     {{ jobDetails.jobDescription }}
                 </p>
                 <div class="action-buttons">
-                    <button class="edit-btn" @click="editJob">Edit</button>
-                    <button class="delete-btn" @click="deleteJob">
-                        Delete
-                    </button>
+                    <template v-if="userType === 'Employer'">
+                        <button class="edit-btn" @click="editJob">Edit</button>
+                        <button class="delete-btn" @click="deleteJob">
+                            Delete
+                        </button>
+                    </template>
+                    <template v-else-if="userType === 'Applicant'">
+                        <button
+                            class="edit-btn"
+                            @click="showApplyDialog = true"
+                        >
+                            Apply
+                        </button>
+                    </template>
                 </div>
             </div>
         </div>
+
+        <!-- Apply Dialog for Applicants -->
+        <el-dialog
+            v-model="showApplyDialog"
+            title="Apply for Job"
+            width="400px"
+        >
+            <el-upload
+                class="upload-demo"
+                drag
+                :before-upload="handleResumeChange"
+                :show-file-list="false"
+                accept=".pdf"
+            >
+                <el-button>Click or Drag to Upload PDF Resume</el-button>
+            </el-upload>
+            <div v-if="resumeFile" class="file-name">
+                <span>Selected file: {{ resumeFile.name }}</span>
+                <el-button
+                    type="danger"
+                    size="small"
+                    style="margin-left: 10px"
+                    @click="resumeFile = null"
+                >
+                    Cancel
+                </el-button>
+            </div>
+            <template #footer>
+                <el-button @click="showApplyDialog = false">Cancel</el-button>
+                <el-button type="primary" @click="submitApplication"
+                    >Submit</el-button
+                >
+            </template>
+        </el-dialog>
     </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useJobsStore } from "../../stores/jobs";
 import { useAuthStore } from "../../stores/user";
@@ -48,13 +92,19 @@ import $axios from "../../axiosInstance";
 
 const route = useRoute();
 const router = useRouter();
-const { fetchJobDetails, deleteJobById } = useJobsStore();
-const { getUserByID } = useAuthStore();
+const { fetchJobDetails, deleteJobById, applyForJob } = useJobsStore();
+const authStore = useAuthStore();
 
 const jobID = route.params.jobID;
 const jobDetails = ref(null);
 const companyName = ref("");
 const loading = ref(true);
+
+const showApplyDialog = ref(false);
+const resumeFile = ref(null);
+
+const userType = computed(() => authStore.userType);
+const userID = computed(() => authStore.userID);
 
 const goBack = () => {
     window.history.back();
@@ -95,12 +145,43 @@ const getImageUrl = (filename) => {
     return `${$axios.imgBaseURL}/${filename}`;
 };
 
+const handleResumeChange = (file) => {
+    if (file.type !== "application/pdf") {
+        ElMessage.error("Only PDF files are allowed.");
+        return false;
+    }
+    resumeFile.value = file;
+    return false; // Prevent auto upload
+};
+
+const submitApplication = async () => {
+    if (!resumeFile.value) {
+        ElMessage.error("Please upload your resume (PDF).");
+        return;
+    }
+    const result = await applyForJob({
+        userID: userID.value,
+        jobID,
+        status: "Applied",
+        resume: resumeFile.value,
+    });
+    if (result && result.success) {
+        ElMessage.success("Application submitted!");
+        showApplyDialog.value = false;
+        router.push({ name: "MyApplications" });
+    } else {
+        ElMessage.error(result?.message || "Failed to apply for job.");
+    }
+};
+
 onMounted(async () => {
     try {
         loading.value = true;
         jobDetails.value = await fetchJobDetails(jobID);
         if (jobDetails.value && jobDetails.value.jobCompany) {
-            companyName.value = await getUserByID(jobDetails.value.jobCompany);
+            companyName.value = await authStore.getUserByID(
+                jobDetails.value.jobCompany
+            );
         }
     } catch (error) {
         console.error("Error loading job details:", error);
@@ -235,5 +316,14 @@ onMounted(async () => {
     100% {
         transform: rotate(360deg);
     }
+}
+.file-name {
+    margin-top: 12px;
+    color: #007bff;
+    font-size: 1rem;
+    word-break: break-all;
+}
+:deep(.el-dialog) {
+    border-radius: 18px;
 }
 </style>

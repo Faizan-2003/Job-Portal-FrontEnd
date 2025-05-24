@@ -9,6 +9,7 @@ import ApplyJob from "../components/Jobs/ApplyJob.vue";
 import JobDetails from "../components/Jobs/JobDetails.vue";
 import PostJobs from "../components/Jobs/PostJobs.vue";
 import EditJob from "@/components/Jobs/EditJob.vue";
+import myapplications from "@/components/Jobs/Applicant/myapplications.vue";
 
 const routes = [
     { path: "/", component: Login },
@@ -35,6 +36,12 @@ const routes = [
         path: "/editjob/:jobID",
         name: "EditJob",
         component: EditJob,
+        props: true,
+    },
+    {
+        path: "/myapplications",
+        name: "MyApplications",
+        component: myapplications,
         props: true,
     },
 ];

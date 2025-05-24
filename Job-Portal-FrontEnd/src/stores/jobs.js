@@ -4,12 +4,13 @@ import $axios from "../axiosInstance";
 export const useJobsStore = () => {
     const jobs = ref([]);
     const companyJobs = ref([]);
+    const myApplications = ref([]);
 
     // Fetch all jobs
     const fetchJobs = async () => {
         try {
             const token = sessionStorage.getItem("token");
-            const response = await $axios.get("/api/jobs", {
+            const response = await $axios.get("/jobs", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -24,7 +25,7 @@ export const useJobsStore = () => {
     const addJob = async (jobData) => {
         try {
             const token = sessionStorage.getItem("token");
-            const response = await $axios.post("/api/job/add", jobData, {
+            const response = await $axios.post("job/add", jobData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data",
@@ -48,7 +49,7 @@ export const useJobsStore = () => {
     const deleteJobById = async (jobID) => {
         try {
             const token = sessionStorage.getItem("token");
-            const response = await $axios.delete(`/api/job/delete/${jobID}`, {
+            const response = await $axios.delete(`job/delete/${jobID}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -72,7 +73,7 @@ export const useJobsStore = () => {
     const fetchCompanyJobs = async (userID) => {
         try {
             const token = sessionStorage.getItem("token");
-            const response = await $axios.get(`/api/jobs/company/${userID}`, {
+            const response = await $axios.get(`jobs/company/${userID}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -96,7 +97,7 @@ export const useJobsStore = () => {
                 headers["Content-Type"] = "application/json";
             }
             const response = await $axios.post(
-                `/api/job/edit/${jobID}`,
+                `job/edit/${jobID}`,
                 isFormData ? jobData : JSON.stringify(jobData),
                 { headers }
             );
@@ -120,7 +121,7 @@ export const useJobsStore = () => {
     const fetchJobDetails = async (jobID) => {
         try {
             const token = sessionStorage.getItem("token");
-            const response = await $axios.get(`/api/job/${jobID}`, {
+            const response = await $axios.get(`job/${jobID}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -133,6 +134,70 @@ export const useJobsStore = () => {
         }
         return null;
     };
+    const applyForJob = async ({ userID, jobID, resume }) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const formData = new FormData();
+            formData.append("userID", userID);
+            formData.append("jobID", jobID);
+            formData.append("status", "Applied");
+            formData.append("resume", resume);
+
+            const response = await $axios.post("job/apply", formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            console.log("Apply job response:", response.data); // <-- Add this line
+            if (response && response.data && response.data.success) {
+                return { success: true };
+            } else {
+                return {
+                    success: false,
+                    message: response?.data?.message || "Unknown error",
+                };
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: error?.response?.data?.message || error.message,
+            };
+        }
+    };
+    const fetchMyApplications = async (userID) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const response = await $axios.get(
+                `job/applications/user/${userID}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            if (
+                response &&
+                response.data &&
+                response.data.success &&
+                Array.isArray(response.data.applications)
+            ) {
+                const jobsDetails = await Promise.all(
+                    response.data.applications.map(async (app) => {
+                        const job = await fetchJobDetails(app.jobID);
+                        console.log("Fetched job for app", app.jobID, job);
+                        return {
+                            ...app,
+                            jobDetails: job,
+                        };
+                    })
+                );
+                myApplications.value = jobsDetails;
+            } else {
+                myApplications.value = [];
+            }
+        } catch (error) {
+            myApplications.value = [];
+        }
+    };
 
     return {
         jobs,
@@ -143,5 +208,7 @@ export const useJobsStore = () => {
         addJob,
         deleteJobById,
         editJob,
+        applyForJob,
+        fetchMyApplications,
     };
 };
