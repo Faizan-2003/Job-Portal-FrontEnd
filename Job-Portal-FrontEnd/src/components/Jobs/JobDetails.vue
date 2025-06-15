@@ -1,12 +1,13 @@
 <template>
-    <section class="job-details-page container">
-        <button class="back-btn mb-4 ms-auto" @click="goBack">← Back</button>
+    <section class="job-details-page">
+        <button class="back-btn" @click="goBack">← Back</button>
 
         <div v-if="loading" class="loading">
             <div class="spinner"></div>
+            <span>Loading job details...</span>
         </div>
 
-        <div v-else class="job-details-layout">
+        <div v-else class="job-details-container">
             <div class="image-container">
                 <img
                     :src="getImageUrl(jobDetails.coverImage)"
@@ -17,13 +18,13 @@
 
             <div class="details-container">
                 <h2 class="job-title">{{ jobDetails.jobTitle }}</h2>
-                <p><strong>Company Name:</strong> {{ companyName }}</p>
+                <p><strong>Company:</strong> {{ companyName }}</p>
                 <p><strong>Location:</strong> {{ jobDetails.jobLocation }}</p>
                 <p><strong>Salary:</strong> €{{ jobDetails.jobSalary }}</p>
                 <p>
                     <strong>Posted Date:</strong> {{ jobDetails.jobPostedDate }}
                 </p>
-                <p>
+                <p class="job-description">
                     <strong>Description:</strong>
                     {{ jobDetails.jobDescription }}
                 </p>
@@ -36,7 +37,7 @@
                     </template>
                     <template v-else-if="userType === 'Applicant'">
                         <button
-                            class="edit-btn"
+                            class="apply-btn"
                             @click="showApplyDialog = true"
                         >
                             Apply
@@ -193,120 +194,58 @@ onMounted(async () => {
 
 <style scoped>
 .job-details-page {
-    padding-top: 100px;
-    padding-bottom: 60px;
-}
-
-.job-details-layout {
-    display: flex;
-    gap: 50px;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
-
-.image-container {
-    flex: 1;
-    max-width: 400px;
-}
-
-.cover-img {
-    width: 600px;
-    margin-left: 20px;
-    height: auto;
-    border-radius: 12px;
-    object-fit: cover;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.details-container {
-    margin-left: 200px;
-    flex: 2;
-    font-size: 1.4rem;
-    line-height: 2;
-    color: #333;
-    text-align: left;
-}
-
-.job-title {
-    font-size: 2.8rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #222;
-}
-
-.action-buttons {
-    margin-top: 20px;
-    display: flex;
-    gap: 20px;
-}
-
-.edit-btn {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.edit-btn:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-}
-
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.delete-btn:hover {
-    background-color: #c82333;
-    transform: translateY(-2px);
+    width: 100%;
+    min-height: calc(100vh - 80px); /* Adjust for navbar */
+    padding: 20px 16px;
+    background: #f3f4f6;
+    margin-top: 80px; /* Account for fixed navbar */
 }
 
 .back-btn {
-    background-color: #f8f9fa;
-    color: #333;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: #fff;
+    color: #1f2937;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
     cursor: pointer;
-    margin-right: 10px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    display: block;
-    margin-left: auto;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.2s;
+    margin-bottom: 16px;
 }
 
 .back-btn:hover {
-    background-color: #e2e6ea;
+    background: #e5e7eb;
     transform: translateY(-2px);
 }
 
 .loading {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    justify-content: center;
+    min-height: 50vh;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 24px;
 }
 
 .spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid rgba(0, 0, 0, 0.1);
-    border-top: 5px solid #007bff;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e5e7eb;
+    border-top: 4px solid #2563eb;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+.loading span {
+    font-size: 1.2rem;
+    color: #4b5563;
 }
 
 @keyframes spin {
@@ -317,13 +256,179 @@ onMounted(async () => {
         transform: rotate(360deg);
     }
 }
+
+.job-details-container {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+    flex: 1;
+    max-width: 400px;
+}
+
+.cover-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.details-container {
+    flex: 2;
+    padding: 16px;
+}
+
+.job-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+}
+
+.details-container p {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-bottom: 8px;
+}
+
+.details-container p strong {
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.job-description {
+    line-height: 1.6;
+    margin-top: 16px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.edit-btn,
+.apply-btn {
+    padding: 10px 20px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.edit-btn:hover,
+.apply-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.delete-btn {
+    padding: 10px 20px;
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+    transform: translateY(-2px);
+}
+
+:deep(.el-dialog) {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+:deep(.el-upload-dragger) {
+    border: 2px dashed #e5e7eb;
+    border-radius: 5px;
+    padding: 16px;
+    text-align: center;
+    background: #f9fafb;
+}
+
+:deep(.el-button) {
+    border-radius: 5px;
+}
+
 .file-name {
     margin-top: 12px;
-    color: #007bff;
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.file-name span {
+    flex: 1;
     word-break: break-all;
 }
-:deep(.el-dialog) {
-    border-radius: 18px;
+
+@media (max-width: 768px) {
+    .job-details-container {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .image-container {
+        max-width: 100%;
+    }
+
+    .cover-img {
+        height: 200px;
+    }
+
+    .details-container {
+        padding: 0;
+    }
+
+    .job-title {
+        font-size: 1.5rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .edit-btn,
+    .apply-btn,
+    .delete-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .job-details-page {
+        padding: 16px 8px;
+    }
+
+    .back-btn {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+
+    .loading span {
+        font-size: 1rem;
+    }
 }
 </style>

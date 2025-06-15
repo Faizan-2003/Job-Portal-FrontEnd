@@ -57,7 +57,7 @@ import { ref } from "vue";
 import { useJobsStore } from "../../stores/jobs";
 import { useAuthStore } from "../../stores/user";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus"; // Import Element Plus message
+import { ElMessage } from "element-plus";
 
 const { addJob } = useJobsStore();
 const { userID } = useAuthStore();

@@ -8,8 +8,9 @@ import FindJobs from "../components/Jobs/FindJobs.vue";
 import ApplyJob from "../components/Jobs/ApplyJob.vue";
 import JobDetails from "../components/Jobs/JobDetails.vue";
 import PostJobs from "../components/Jobs/PostJobs.vue";
-import EditJob from "@/components/Jobs/EditJob.vue";
-import myapplications from "@/components/Jobs/Applicant/myapplications.vue";
+import EditJob from "../components/Jobs/EditJob.vue";
+import myapplications from "../components/Jobs/Applicant/myapplications.vue";
+import ApplicationProgress from "../components/Jobs/Applicant/applicationProgress.vue";
 
 const routes = [
     { path: "/", component: Login },
@@ -43,6 +44,11 @@ const routes = [
         name: "MyApplications",
         component: myapplications,
         props: true,
+    },
+    {
+        path: "/application-progress/:applicationID",
+        name: "ApplicationProgress",
+        component: ApplicationProgress,
     },
 ];
 
