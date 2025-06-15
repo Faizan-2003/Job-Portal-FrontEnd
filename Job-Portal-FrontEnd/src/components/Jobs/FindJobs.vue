@@ -1,6 +1,6 @@
 <template>
     <section class="find-jobs-page">
-        <h1>Find Jobs</h1>
+        <h1 class="heading">Find Jobs</h1>
         <div v-if="jobs.length > 0" class="job-cards-container">
             <div
                 v-for="(job, index) in jobs"
@@ -34,6 +34,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.heading {
+    font-size: 36px;
+    font-weight: bold;
+    color: #0077b6;
+    margin-top: 80px;
+}
 .find-jobs-page {
     padding: 20px;
     background-color: #f9f9f9;
@@ -44,7 +50,7 @@ onMounted(() => {
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
-    margin-top: 60px;
+    margin-top: 30px;
 }
 .job-card-wrapper {
     cursor: pointer;

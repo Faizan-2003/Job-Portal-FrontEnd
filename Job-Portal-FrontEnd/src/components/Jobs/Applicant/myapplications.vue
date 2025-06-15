@@ -1,6 +1,6 @@
 <template>
     <section class="my-applications-page">
-        <h2>My Applications</h2>
+        <h2>Jobs you have Applied to..</h2>
 
         <!-- Loading State -->
         <div v-if="loading" class="loading">Loading applications...</div>
@@ -160,10 +160,11 @@ const getStatusStyle = (status) => {
 }
 
 h2 {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
+    margin-bottom: 24px;
     text-align: center;
-    margin-bottom: 20px;
+    color: #0077b6;
 }
 
 .job-cards-container {

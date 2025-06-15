@@ -11,7 +11,7 @@ import PostJobs from "../components/Jobs/PostJobs.vue";
 import EditJob from "../components/Jobs/EditJob.vue";
 import myapplications from "../components/Jobs/Applicant/myapplications.vue";
 import ApplicationProgress from "../components/Jobs/Applicant/applicationProgress.vue";
-
+import jobApplications from "../components/Jobs/Employer/jobApplications.vue";
 const routes = [
     { path: "/", component: Login },
     { path: "/home", component: Home },
@@ -49,6 +49,11 @@ const routes = [
         path: "/application-progress/:applicationID",
         name: "ApplicationProgress",
         component: ApplicationProgress,
+    },
+    {
+        path: "/job-applications",
+        name: "JobApplications",
+        component: jobApplications,
     },
 ];
 

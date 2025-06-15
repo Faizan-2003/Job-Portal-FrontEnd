@@ -4,8 +4,8 @@
             <h1 class="hero-title">
                 {{
                     userType === "Applicant"
-                        ? "Discover Your Next Career Move"
-                        : "Find Top Talent for Your Team"
+                        ? "Discover Your Next Career Move💼"
+                        : "Find Top Talent for Your Team👥"
                 }}
             </h1>
             <p class="hero-subtitle">

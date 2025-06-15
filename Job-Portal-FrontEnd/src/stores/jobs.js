@@ -8,6 +8,7 @@ export const useJobsStore = defineStore(
         const jobs = ref([]);
         const companyJobs = ref([]);
         const myApplications = ref([]);
+        const companyApplications = ref([]);
 
         const getToken = () => sessionStorage.getItem("token");
 
@@ -189,11 +190,35 @@ export const useJobsStore = defineStore(
             }
         };
 
+        // Fetch all applications for jobs posted by the employer (company)
+        const fetchCompanyApplications = async (userID) => {
+            try {
+                const token = getToken();
+                const response = await $axios.get(
+                    `/job/applications/employer/${userID}`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                if (
+                    response?.data?.success &&
+                    Array.isArray(response.data.applications)
+                ) {
+                    companyApplications.value = response.data.applications;
+                } else {
+                    companyApplications.value = [];
+                }
+            } catch (error) {
+                companyApplications.value = [];
+            }
+        };
+
         return {
             // State
             jobs,
             companyJobs,
             myApplications,
+            companyApplications,
 
             // Actions
             fetchJobs,
@@ -204,6 +229,7 @@ export const useJobsStore = defineStore(
             editJob,
             applyForJob,
             fetchMyApplications,
+            fetchCompanyApplications,
         };
     },
     {
